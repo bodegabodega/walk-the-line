@@ -4,7 +4,7 @@ I often find myself writing scripts that need to pick up a file and do a bit of 
 
 ## Example
 
-```
+```javascript
 var WalkTheLine = require('walk-the-line');
 
 // Create an instance
