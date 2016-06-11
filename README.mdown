@@ -34,7 +34,7 @@ wtl.before = function(count, done) {
  * 3. line - The content of the line
  * 4. done - If defined, call the done method when you're done doing async stuff
  */
-wtl.line = function(index, count, line, done {
+wtl.line = function(index, count, line, done) {
 	console.log(`Processing line ${index} of ${count}`);
 
 	doSomethingAsync(line, function(){
