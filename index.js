@@ -1,13 +1,13 @@
 'use strict';
 
 var _ = require('lodash'),
-	fs = require('fs');
+	fs = require('fs'),
+	glob = require('glob');
 
 class WalkTheLine {
-	constructor(filename, opts) {
-		this.filename = filename;
+	constructor(opts) {
 		this.options = _.defaults({}, opts, {
-
+			'extension': ''
 		});
 	}
 
@@ -35,8 +35,28 @@ class WalkTheLine {
 		} else this.startLine();
 	}
 
+	/**
+	 * Initiates the process
+	 */
 	run() {
-		if (!this.filename) throw new Error('No filename set');
+		if (!this.options.source) throw new Error('No source set');
+
+		try {
+			var stats = fs.lstatSync(this.options.source);
+		}
+		catch(e) {
+			throw new Error('Unable to access source');
+		}
+		if(stats.isFile()) {
+			this.files = [this.options.source];
+		} else if (stats.isDirectory()) {
+			if( this.options.source.split(-1) !== '/' ) this.options.source += '/';
+			let pattern = this.options.extension ? `${this.options.source}*.${this.options.extension}` : `${this.options.source}*`;
+			this.files = glob.sync(pattern, {
+				'nodir': true
+			});
+		}
+		return;
 
 		this.lines = fs.readFileSync(this.filename, 'utf8').split('\n');
 		this.count = this.lines.length;

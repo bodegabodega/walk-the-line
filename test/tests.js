@@ -3,13 +3,52 @@
 var should = require('should'),
 	WalkTheLine = require('../index');
 
-console.log(WalkTheLine);
 describe('Walk the Line', function() {
 	describe('runtime', function() {
-		it('should throw an error when run() called without filename', function() {
+		it('should throw an error when run() called without a source', function() {
 			let inst = new WalkTheLine();
-			inst.run.bind(inst).should.throw();
+			inst.run.bind(inst).should.throw('No source set');
 		})
+		it('should throw an error when run() called with a non-existent source', function() {
+			let inst = new WalkTheLine({
+				'source': './not-a-resource'
+			});
+			inst.run.bind(inst).should.throw('Unable to access source');
+		})
+		it('should be able to correctly handle a source that is a file', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.txt'
+			});
+			inst.run();
+			inst.files.should.be.an.Array();
+			inst.files.length.should.equal(1)
+		})
+		it('should handle a source that is a directory that doesn\'t end with a /', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.run();
+			inst.files.should.be.an.Array();
+			inst.files.length.should.equal(3)
+		})
+		it('should handle a source that is a directory that ends with a /', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data/'
+			});
+			inst.run();
+			inst.files.should.be.an.Array();
+			inst.files.length.should.equal(3)
+		})
+		it('should allow an extension to be set to filter the directory', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data/',
+				'extension': 'txt'
+			});
+			inst.run();
+			inst.files.should.be.an.Array();
+			inst.files.length.should.equal(2)
+		})
+		/*
 		it('should not throw an error if a before() method is not defined', function(){
 			let inst = new WalkTheLine('./test-data/test-file.txt');
 			inst.run.bind(inst).should.not.throw();
@@ -49,5 +88,6 @@ describe('Walk the Line', function() {
 			inst.after = function() { this.foo.should.equal('bar'); }
 			inst.run();
 		})
+		*/
 	})
 })

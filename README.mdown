@@ -8,7 +8,10 @@ I often find myself writing scripts that need to pick up a file and do a bit of 
 var WalkTheLine = require('walk-the-line');
 
 // Create an instance
-let wtl = new WalkTheLine('./path/to-your/file.txt');
+let wtl = new WalkTheLine({
+	'source': './path/to-your/file.txt', // may be a file or a directory
+	'extension': 'txt' // if source is a directory and extension is set, it will only include that type
+});
 
 /**
  * Create a before method if you want to do anything before you start parsing lines.
