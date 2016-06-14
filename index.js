@@ -16,7 +16,7 @@ class WalkTheLine {
 	 * The start method is called when the process begins.
 	 */
 	startDone() {
-		this.nextFile();
+		setTimeout(this.nextFile.bind(this), 0)
 	}
 	/**
 	 * Starts the next file
@@ -32,7 +32,7 @@ class WalkTheLine {
 	 * Called when the fileStart method is done
 	 */
 	fileStartDone() {
-		this.nextLine();
+		setTimeout(this.nextLine.bind(this), 0);
 	}
 	/**
 	 * Starts the next line
@@ -49,7 +49,7 @@ class WalkTheLine {
 
 		if(this.lineIndex >= this.lines.length) {
 			this.callConditionalFunction('fileEnd', [this.file]);
-		} else this.nextLine();
+		} else setTimeout(this.nextLine.bind(this), 0);
 	}
 	/**
 	 * Called when the fileEnd method is done
@@ -59,7 +59,7 @@ class WalkTheLine {
 
 		if(this.fileIndex >= this.files.length) {
 			this.callConditionalFunction('end');
-		} else this.nextFile();
+		} else setTimeout(this.nextFile.bind(this), 0);
 	}
 	/**
 	 * Called when the end method is done
