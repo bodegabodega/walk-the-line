@@ -1,14 +1,11 @@
 'use strict';
 
-var _ = require('lodash'),
-	fs = require('fs'),
+var fs = require('fs'),
 	glob = require('glob');
 
 class WalkTheLine {
 	constructor(opts) {
-		this.options = _.defaults({}, opts, {
-
-		});
+		this.options = opts || {};
 	}
 
 	/**
@@ -96,6 +93,12 @@ class WalkTheLine {
 		this.fileIndex = 0;
 	}
 
+	/**
+	 * Calls the function of the provided name if it exists on this object.
+	 * Conditionally adds a done callback based on the number of arguments
+	 * of the defined function. Calls a function named `name + 'Done'` after
+	 * this name function is called or not called.
+	 */
 	callConditionalFunction(name, args) {
 		let done = name + 'Done';
 		if(typeof this[name] === 'function') {
@@ -121,18 +124,6 @@ class WalkTheLine {
 		this.prepare();
 
 		this.callConditionalFunction('start', [this.files.length]);
-
-		// return;
-		// this.lines = fs.readFileSync(this.filename, 'utf8').split('\n');
-		// this.count = this.lines.length;
-		// this.index = 0;
-
-		// if(typeof this.before === 'function') {
-		// 	if(this.before.length < 2) {
-		// 		this.before(this.count);
-		// 		this.beforeDone();
-		// 	} else this.before(this.count, this.beforeDone.bind(this));
-		// } else this.beforeDone();
 	}
 }
 
