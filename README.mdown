@@ -14,6 +14,22 @@ let wtl = new WalkTheLine({
 });
 
 /**
+ * Create a start method if you want to do anything when the process first starts.
+ * This is only ever called once for the run.
+ *
+ * The start method can recieve 2 optional parameters:
+ * 1. numFiles - The number of files being processed
+ * 2. done - If defined, call the done method when you're done doing async stuff
+ */
+wtl.start = function(numFiles, done) {
+	console.log(`Processing ${numFiles} files`);
+
+	doSomethingAsync(function(){
+		done();
+	});
+}
+
+/**
  * Create a before method if you want to do anything before you start parsing lines.
  *
  * The before method can recieve 2 optional parameters:

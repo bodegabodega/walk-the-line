@@ -7,40 +7,75 @@ var _ = require('lodash'),
 class WalkTheLine {
 	constructor(opts) {
 		this.options = _.defaults({}, opts, {
-			'extension': ''
+
 		});
 	}
 
-	beforeDone() {
-		this.startLine();
+	/**
+	 * Called when the start method is done.
+	 * The start method is called when the process begins.
+	 */
+	startDone() {
+		this.nextFile();
 	}
+	/**
+	 * Starts the next file
+	 */
+	nextFile() {
+		this.file = this.files[this.fileIndex];
+		this.lines = fs.readFileSync(this.file, 'utf8').split('\n');
+		this.lineIndex = 0;
 
-	startLine() {
-		let line = this.lines[this.index];
-		if(typeof this.line === 'function') {
-			if (this.line.length < 4) {
-				this.line(this.index, this.count, line);
-				this.lineDone();
-			} else this.line(this.index, this.count, line, this.lineDone.bind(this));
-		} else this.lineDone();
+		this.callConditionalFunction('fileStart', [this.file, this.lines.length])
 	}
-
+	/**
+	 * Called when the fileStart method is done
+	 */
+	fileStartDone() {
+		this.nextLine();
+	}
+	/**
+	 * Starts the next line
+	 */
+	nextLine() {
+		let line = this.lines[this.lineIndex];
+		this.callConditionalFunction('line', [this.lineIndex, this.lines.length, line]);
+	}
+	/**
+	 * Called when the line method is done
+	 */
 	lineDone() {
-		this.index++;
+		this.lineIndex++;
 
-		if(this.index >= this.count) {
-			if (typeof this.after === 'function') {
-				this.after();
-			}
-		} else this.startLine();
+		if(this.lineIndex >= this.lines.length) {
+			this.callConditionalFunction('fileEnd', [this.file]);
+		} else this.nextLine();
+	}
+	/**
+	 * Called when the fileEnd method is done
+	 */
+	fileEndDone() {
+		this.fileIndex++;
+
+		if(this.fileIndex >= this.files.length) {
+			this.callConditionalFunction('end');
+		} else this.nextFile();
+	}
+	/**
+	 * Called when the end method is done
+	 */
+	endDone() {
+		
 	}
 
 	/**
-	 * Initiates the process
+	 * Ensures the requisite variables are set and initialises variables
 	 */
-	run() {
+	prepare() {
+		// Throw if source isn't set
 		if (!this.options.source) throw new Error('No source set');
 
+		// Get stats for source and throw can't
 		try {
 			var stats = fs.lstatSync(this.options.source);
 		}
@@ -56,18 +91,48 @@ class WalkTheLine {
 				'nodir': true
 			});
 		}
-		return;
 
-		this.lines = fs.readFileSync(this.filename, 'utf8').split('\n');
-		this.count = this.lines.length;
-		this.index = 0;
+		// Initialise variables
+		this.fileIndex = 0;
+	}
 
-		if(typeof this.before === 'function') {
-			if(this.before.length < 2) {
-				this.before(this.count);
-				this.beforeDone();
-			} else this.before(this.count, this.beforeDone.bind(this));
-		} else this.beforeDone();
+	callConditionalFunction(name, args) {
+		let done = name + 'Done';
+		if(typeof this[name] === 'function') {
+			if (args) {
+				if(this[name].length <= args.length) {
+					this[name].apply(this, args);
+					this[done]();
+				} else {
+					args.push(this[done].bind(this));
+					this[name].apply(this, args);
+				}
+			} else {
+				this[name]();
+				this[done]();
+			}
+		} else this[done]();
+	}
+
+	/**
+	 * Initiates the process
+	 */
+	run() {
+		this.prepare();
+
+		this.callConditionalFunction('start', [this.files.length]);
+
+		// return;
+		// this.lines = fs.readFileSync(this.filename, 'utf8').split('\n');
+		// this.count = this.lines.length;
+		// this.index = 0;
+
+		// if(typeof this.before === 'function') {
+		// 	if(this.before.length < 2) {
+		// 		this.before(this.count);
+		// 		this.beforeDone();
+		// 	} else this.before(this.count, this.beforeDone.bind(this));
+		// } else this.beforeDone();
 	}
 }
 

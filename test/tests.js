@@ -37,7 +37,7 @@ describe('Walk the Line', function() {
 			});
 			inst.run();
 			inst.files.should.be.an.Array();
-			inst.files.length.should.equal(3)
+			inst.files.length.should.equal(3);
 		})
 		it('should allow an extension to be set to filter the directory', function() {
 			let inst = new WalkTheLine({
@@ -46,8 +46,78 @@ describe('Walk the Line', function() {
 			});
 			inst.run();
 			inst.files.should.be.an.Array();
-			inst.files.length.should.equal(2)
+			inst.files.length.should.equal(2);
 		})
+		it('should not throw an error if any of the processing methods are not defined', function(){
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.txt'
+			});
+			inst.run.bind(inst).should.not.throw();
+		})
+		it('should call start() with the file count if the method is defined with 1 argument', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.start = function(count) {
+				count.should.equal(3);
+			}
+			inst.run();
+		})
+		it('should call start() with the file count and a done callback if the method is defined with 2 arguments', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.start = function(count, done) {
+				count.should.equal(3);
+				done.should.be.a.Function();
+			}
+			inst.run();
+		})
+		it('should call fileStart() with the filename and line count if the method is defined with 2 arguments', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.fileStart = function(filename, numLines) {
+				filename.should.match(/test\-data\/test\-file/);
+				numLines.should.equal(4);
+			}
+			inst.run();
+		})
+		it('should call fileStart() with the filename, line count and a done callback if the method is defined with 3 arguments', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.fileStart = function(filename, numLines, done) {
+				filename.should.match(/test\-data\/test\-file/);
+				numLines.should.equal(4);
+				done.should.be.a.Function();
+			}
+			inst.run();
+		})
+		it('should call line() with the line index, line count and line if the method is defined with 3 arguments', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.line = function(lineIndex, numLines, line) {
+				lineIndex.should.be.a.Number();
+				numLines.should.equal(4);
+				line.should.match(/Line$/);
+			}
+			inst.run();
+		})
+		it('should call line() with the line index, line count, line and a done callback if the method is defined with 4 arguments', function() {
+			let inst = new WalkTheLine({
+				'source': './test-data'
+			});
+			inst.line = function(lineIndex, numLines, line, done) {
+				lineIndex.should.be.a.Number();
+				numLines.should.equal(4);
+				line.should.match(/Line$/);
+				done.should.be.a.Function();
+			}
+			inst.run();
+		})
+		
 		/*
 		it('should not throw an error if a before() method is not defined', function(){
 			let inst = new WalkTheLine('./test-data/test-file.txt');
