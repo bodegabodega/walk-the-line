@@ -2,6 +2,12 @@
 
 I often find myself writing scripts that need to pick up a file and do a bit of processing on each line. Walk the Line is my attempt at creating a reusable object that does the dirty work.
 
+## Installation
+
+```
+npm install --save-dev walk-the-line
+```
+
 ## Example
 
 ```javascript
