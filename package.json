@@ -1,13 +1,13 @@
 {
   "name": "walk-the-line",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Read a file and do something line by line.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "bodegabodega",
+  "license": "MIT",
   "devDependencies": {
     "mocha": "^2.5.3",
     "should": "^9.0.0"
