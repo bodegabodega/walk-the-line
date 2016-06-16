@@ -10,7 +10,8 @@ var WalkTheLine = require('walk-the-line');
 // Create an instance
 let wtl = new WalkTheLine({
 	'source': './path/to-your/file.txt', // may be a file or a directory
-	'extension': 'txt' // if source is a directory and extension is set, it will only include that type
+	'extension': 'txt', // if source is a directory and extension is set, it will only include that type
+	'headerline': true // if set to true, the files don't call the line() method for the first line
 });
 
 /**
