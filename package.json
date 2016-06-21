@@ -1,6 +1,6 @@
 {
   "name": "walk-the-line",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Read a file and do something for each line.",
   "main": "index.js",
   "directories": {
