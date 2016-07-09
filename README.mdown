@@ -76,7 +76,7 @@ wtl.line = function(index, numLines, line, done) {
  * 1. filename - The name of the file
  * 2. done - If defined, call the done method when you're done doing async stuff
  */
-wtl.fileEnd(filename, done) {
+wtl.fileEnd = function(filename, done) {
 	console.log(`Finished processing ${filename}`);
 
 	doSomethingAsync(function(){

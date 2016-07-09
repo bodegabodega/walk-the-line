@@ -205,6 +205,31 @@ describe('Walk the Line', function() {
 			}
 			inst.run();
 		})
+		it('should have the headerline available as a property if the headerline option is set to true', function(done) {
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.csv',
+				'headerline': true
+			})
+			inst.line = function(lineIndex, numLines, line) {
+				this.headerline.should.equal('Headerline');
+			}
+			inst.end = function() {
+				done();
+			}
+			inst.run();
+		})
+		it('should have a null value for headerline if the headerline option is not set to true', function(done) {
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.csv'
+			})
+			inst.line = function(lineIndex, numLines, line) {
+				should.not.exist(this.headerline);
+			}
+			inst.end = function() {
+				done();
+			}
+			inst.run();
+		})
 		/*
 		it('should not throw an error if a before() method is not defined', function(){
 			let inst = new WalkTheLine('./test-data/test-file.txt');
