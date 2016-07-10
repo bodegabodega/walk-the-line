@@ -17,7 +17,7 @@ var WalkTheLine = require('walk-the-line');
 let wtl = new WalkTheLine({
 	'source': './path/to-your/file.txt', // may be a file or a directory
 	'extension': 'txt', // if source is a directory and extension is set, it will only include that type
-	'headerline': true // if set to true, the files don't call the line() method for the first line
+	'headerline': true // if set to true, the files don't call the line() method for the first line and you can access the headerline on the instance during the file processing
 });
 
 /**
@@ -46,6 +46,7 @@ wtl.start = function(numFiles, done) {
  */
 wtl.fileStart = function(filename, numLines, done) {
 	console.log(`Processing ${filename} with ${numLines} lines`);
+	console.log(this.headerline); // available if you have set headerline to true in the options
 
 	doSomethingAsync(function(){
 		done();
