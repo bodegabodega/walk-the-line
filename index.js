@@ -22,6 +22,7 @@ class WalkTheLine {
 		this.file = this.files[this.fileIndex];
 		this.lines = fs.readFileSync(this.file, 'utf8').split('\n');
 		this.lineIndex = this.options.headerline ? 1 : 0;
+		this.headerline = this.options.headerline ? this.lines[0] : null;
 
 		this.callConditionalFunction('fileStart', [this.file, this.lines.length])
 	}

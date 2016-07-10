@@ -205,46 +205,30 @@ describe('Walk the Line', function() {
 			}
 			inst.run();
 		})
-		/*
-		it('should not throw an error if a before() method is not defined', function(){
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.run.bind(inst).should.not.throw();
-		})
-		it('should call before() with the line count if the method is defined with 1 argument', function() {
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.before = function(count) {
-				count.should.equal(4);
+		it('should have the headerline available as a property if the headerline option is set to true', function(done) {
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.csv',
+				'headerline': true
+			})
+			inst.line = function(lineIndex, numLines, line) {
+				this.headerline.should.equal('Headerline');
+			}
+			inst.end = function() {
+				done();
 			}
 			inst.run();
 		})
-		it('should call before() with the line count and a done callback if the method is defined with 2 arguments', function() {
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.before = function(count, done) {
-				count.should.equal(4);
-				done.should.be.a.Function();
+		it('should have a null value for headerline if the headerline option is not set to true', function(done) {
+			let inst = new WalkTheLine({
+				'source': './test-data/test-file.csv'
+			})
+			inst.line = function(lineIndex, numLines, line) {
+				should.not.exist(this.headerline);
+			}
+			inst.end = function() {
+				done();
 			}
 			inst.run();
 		})
-		it('should not throw an error if a before() method is not defined', function(){
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.run.bind(inst).should.not.throw();
-		})
-		it('should call line() with the index, line count and line if the method is defined with 3 arguments', function() {
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.line = function(index, count, line) {
-				index.should.be.a.Number();
-				count.should.equal(4);
-				line.should.be.a.String();
-			}
-			inst.run();
-		})
-		it('should allow you to assign values to this during the before() method that are accessible during the each() and after() method', function(){
-			let inst = new WalkTheLine('./test-data/test-file.txt');
-			inst.before = function() { this.foo = 'bar'; }
-			inst.line = function() { this.foo.should.equal('bar'); }
-			inst.after = function() { this.foo.should.equal('bar'); }
-			inst.run();
-		})
-		*/
 	})
 })
