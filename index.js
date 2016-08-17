@@ -5,7 +5,20 @@ var fs = require('fs'),
 
 class WalkTheLine {
 	constructor(opts) {
-		this.options = opts || {};
+		this._options = opts || {};
+	}
+
+	/**
+	 * Get files
+	 */
+	get files() {
+		return this._files;
+	}
+	/**
+	 * Get Headerline
+	 */
+	get headerline() {
+		return this._headerline;
 	}
 
 	/**
@@ -19,12 +32,12 @@ class WalkTheLine {
 	 * Starts the next file
 	 */
 	nextFile() {
-		this.file = this.files[this.fileIndex];
-		this.lines = fs.readFileSync(this.file, 'utf8').split('\n');
-		this.lineIndex = this.options.headerline ? 1 : 0;
-		this.headerline = this.options.headerline ? this.lines[0] : null;
+		this._file = this._files[this._fileIndex];
+		this._lines = fs.readFileSync(this._file, 'utf8').split('\n');
+		this._lineIndex = this._options.headerline ? 1 : 0;
+		this._headerline = this._options.headerline ? this._lines[0] : null;
 
-		this.callConditionalFunction('fileStart', [this.file, this.lines.length])
+		this.callConditionalFunction('fileStart', [this._file, this._lines.length])
 	}
 	/**
 	 * Called when the fileStart method is done
@@ -36,26 +49,26 @@ class WalkTheLine {
 	 * Starts the next line
 	 */
 	nextLine() {
-		let line = this.lines[this.lineIndex];
-		this.callConditionalFunction('line', [this.lineIndex, this.lines.length, line]);
+		let line = this._lines[this._lineIndex];
+		this.callConditionalFunction('line', [this._lineIndex, this._lines.length, line]);
 	}
 	/**
 	 * Called when the line method is done
 	 */
 	lineDone() {
-		this.lineIndex++;
+		this._lineIndex++;
 
-		if(this.lineIndex >= this.lines.length) {
-			this.callConditionalFunction('fileEnd', [this.file]);
+		if(this._lineIndex >= this._lines.length) {
+			this.callConditionalFunction('fileEnd', [this._file]);
 		} else setTimeout(this.nextLine.bind(this), 0);
 	}
 	/**
 	 * Called when the fileEnd method is done
 	 */
 	fileEndDone() {
-		this.fileIndex++;
+		this._fileIndex++;
 
-		if(this.fileIndex >= this.files.length) {
+		if(this._fileIndex >= this._files.length) {
 			this.callConditionalFunction('end');
 		} else setTimeout(this.nextFile.bind(this), 0);
 	}
@@ -71,27 +84,27 @@ class WalkTheLine {
 	 */
 	prepare() {
 		// Throw if source isn't set
-		if (!this.options.source) throw new Error('No source set');
+		if (!this._options.source) throw new Error('No source set');
 
 		// Get stats for source and throw can't
 		try {
-			var stats = fs.lstatSync(this.options.source);
+			var stats = fs.lstatSync(this._options.source);
 		}
 		catch(e) {
 			throw new Error('Unable to access source');
 		}
 		if(stats.isFile()) {
-			this.files = [this.options.source];
+			this._files = [this._options.source];
 		} else if (stats.isDirectory()) {
-			if( this.options.source.split(-1) !== '/' ) this.options.source += '/';
-			let pattern = this.options.extension ? `${this.options.source}*.${this.options.extension}` : `${this.options.source}*`;
-			this.files = glob.sync(pattern, {
+			if( this._options.source.split(-1) !== '/' ) this._options.source += '/';
+			let pattern = this._options.extension ? `${this._options.source}*.${this._options.extension}` : `${this._options.source}*`;
+			this._files = glob.sync(pattern, {
 				'nodir': true
 			});
 		}
 
 		// Initialise variables
-		this.fileIndex = 0;
+		this._fileIndex = 0;
 	}
 
 	/**
@@ -124,7 +137,7 @@ class WalkTheLine {
 	run() {
 		this.prepare();
 
-		this.callConditionalFunction('start', [this.files.length]);
+		this.callConditionalFunction('start', [this._files.length]);
 	}
 }
 
