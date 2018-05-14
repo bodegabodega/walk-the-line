@@ -230,5 +230,41 @@ describe('Walk the Line', function() {
 			}
 			inst.run();
 		})
+		it('should allow for an empty plugins', (done) => {
+			const inst = new WalkTheLine({
+				'source': './test-data/test-file.csv',
+				'plugins': {
+					// empty
+				}
+			})
+			inst.end = () => {
+				done()
+			}
+			inst.run();
+		})
+		it('should not allow for a plugin name that doesn\'t exist', () => {
+			const inst = new WalkTheLine({
+				'source': './test-data/test-file.csv',
+				'plugins': {
+					'fakeplugin': {}
+				}
+			})
+			inst.run.bind(inst).should.throw('Unable to create plugin with name fakeplugin');
+		})
+		it('should create a plugin if the file exists in the plugin directory', (done) => {
+			const inst = new WalkTheLine({
+				'source': './test-data/test-file.csv',
+				'plugins': {
+					'progress': {}
+				}
+			})
+			inst.start = function() {
+				should.exist(this.plugins.progress);
+			}			
+			inst.end = () => {
+				done()
+			}
+			inst.run();			
+		})
 	})
 })

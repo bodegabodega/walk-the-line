@@ -17,7 +17,12 @@ var WalkTheLine = require('walk-the-line');
 let wtl = new WalkTheLine({
 	'source': './path/to-your/file.txt', // may be a file or a directory
 	'extension': 'txt', // if source is a directory and extension is set, it will only include that type
-	'headerline': true // if set to true, the files don't call the line() method for the first line and you can access the headerline on the instance during the file processing
+	'headerline': true, // if set to true, the files don't call the line() method for the first line and you can access the headerline on the instance during the file processing
+	'plugins': { // list of plugins
+		'progress': { // only plugin we have so far
+			'template': ':bar' // passed thru to https://github.com/visionmedia/node-progress
+		}
+	}
 });
 
 /**

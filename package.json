@@ -11,7 +11,8 @@
     "should": "^9.0.0"
   },
   "dependencies": {
-    "glob": "^7.0.3"
+    "glob": "^7.0.3",
+    "progress": "^2.0.0"
   },
   "scripts": {
     "test": "mocha"
